@@ -50,13 +50,6 @@ local statusBar    = "waybar"
 -- See https://wiki.hypr.land/Configuring/Basics/Autostart/
 
 -- Autostart necessary processes (like notifications daemons, status bars, etc.)
--- Or execute your favorite apps at launch like this:
---
--- hl.on("hyprland.start", function () 
---   hl.exec_cmd(terminal)
---   hl.exec_cmd("nm-applet")
---   hl.exec_cmd("waybar & hyprpaper & firefox")
--- end)
 
 hl.on("hyprland.start",function ()
      hl.exec_cmd(notification)
@@ -73,7 +66,8 @@ end)
 
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
-
+hl.env("EDITOR","nvim")
+hl.env("VISUAL", "nvim")
 
 -----------------------
 ----- PERMISSIONS -----
@@ -121,7 +115,7 @@ hl.config({
     },
 
     decoration = {
-        rounding       = 10,
+        rounding       = 3,
         rounding_power = 2,
 
         -- Change transparency of focused and unfocused windows
