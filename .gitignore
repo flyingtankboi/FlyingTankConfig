@@ -4,3 +4,6 @@
 !hypr/**
 !kitty/
 !kitty/**
+!starship.toml
+!fish/
+!fish/**

@@ -1,0 +1,151 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# ──────────────────────────────────────────────────────────────
+#  "Ember HUD" — a retro-terminal prompt
+#
+#  Line 1:  ▌ //~/dev/dotfiles ▶  main  !2 ▶  3.12 ▶ ────────── //EXEC 1.2s
+#  Line 2:  ›››
+#
+#  Cream title-bar block = where you are, grey = git, espresso = tooling.
+#  Sharp red only appears as small signal blocks: uncommitted git changes,
+#  read-only folders, root, and failed commands.
+# ──────────────────────────────────────────────────────────────
+
+add_newline = true
+palette = "ember"
+
+format = """
+[▌](fg:urgent)\
+$username\
+$hostname\
+$directory\
+[\ue0b0](fg:text bg:overlay)\
+$git_branch\
+$git_status\
+[\ue0b0](fg:overlay bg:surface)\
+$python\
+$rust\
+$nodejs\
+$lua\
+$golang\
+$c\
+[\ue0b0 ](fg:surface)\
+$fill\
+$status\
+$cmd_duration
+$character"""
+
+# ── Palette: names are roles, so restyling = editing this block ──
+[palettes.ember]
+base     = "#1A161C"   # background
+surface  = "#3F3532"   # raised surfaces
+overlay  = "#534D4F"   # borders / inactive
+muted    = "#88756A"   # dim text, thin lines
+subtle   = "#DDD1C4"   # secondary text
+text     = "#FFF0E2"   # main text / title bars
+peach    = "#FEAF72"   # rare warm highlight
+burgundy = "#6F2119"   # selection / active background
+urgent   = "#D00003"   # sharp red signal blocks
+error    = "#E5483E"   # readable red for text
+sage     = "#9AA36B"
+steel    = "#7E97A6"
+plum     = "#B07A8C"
+teal     = "#7FA39A"
+
+# ── Segment 1: the "title bar" (cream, dark text) ────────────
+# user/host only appear over SSH or as root — root turns the block red.
+[username]
+show_always = false
+style_user  = "bg:text fg:base bold"
+style_root  = "bg:urgent fg:text bold"
+format      = "[ $user]($style)"
+
+[hostname]
+ssh_only = true
+style    = "bg:text fg:base bold"
+format   = "[@$hostname]($style)"
+
+[directory]
+style             = "bg:text fg:base bold"
+format            = "[ //$path ]($style)[$read_only]($read_only_style)"
+truncation_length = 3
+truncation_symbol = "…/"
+read_only         = " RO "
+read_only_style   = "bg:urgent fg:text bold"
+
+# ── Segment 2: git (grey panel) ──────────────────────────────
+[git_branch]
+symbol = "\ue0a0 "
+style  = "bg:overlay fg:text"
+format = "[ $symbol$branch ]($style)"
+
+# Clean repo: nothing. Uncommitted work: a small red block.
+[git_status]
+style      = "bg:burgundy fg:text bold"
+format     = "([\ue0b0](fg:overlay bg:burgundy)[ $all_status$ahead_behind ]($style)[\ue0b0](fg:burgundy bg:overlay))"
+ahead      = "⇡${count}"
+behind     = "⇣${count}"
+diverged   = "⇕⇡${ahead_count}⇣${behind_count}"
+conflicted = "="
+untracked  = "?"
+stashed    = "≡"
+modified   = "!"
+staged     = "+"
+renamed    = "»"
+deleted    = "✘"
+
+# ── Segment 3: language tooling (espresso panel) ─────────────
+# Only shows inside projects that use the language.
+[python]
+symbol = "\ue73c "
+style  = "bg:surface fg:subtle"
+format = "[ $symbol($version)(\\($virtualenv\\)) ]($style)"
+
+[rust]
+symbol = "\ue7a8 "
+style  = "bg:surface fg:subtle"
+format = "[ $symbol($version) ]($style)"
+
+[nodejs]
+symbol = "\ue718 "
+style  = "bg:surface fg:subtle"
+format = "[ $symbol($version) ]($style)"
+
+[lua]
+symbol = "\ue620 "
+style  = "bg:surface fg:subtle"
+format = "[ $symbol($version) ]($style)"
+
+[golang]
+symbol = "\ue627 "
+style  = "bg:surface fg:subtle"
+format = "[ $symbol($version) ]($style)"
+
+[c]
+symbol = "\ue61e "
+style  = "bg:surface fg:subtle"
+format = "[ $symbol($version) ]($style)"
+
+# ── Right side: a thin HUD rule, then readouts ───────────────
+[fill]
+symbol = "─"
+style  = "fg:overlay"
+
+# Exit code of a failed command, as a red signal block.
+[status]
+disabled = false
+style    = "bg:urgent fg:text bold"
+format   = " [ ERR $status ]($style)"
+
+# How long the LAST command took to run (shown after every command).
+[cmd_duration]
+min_time          = 0
+show_milliseconds = true
+style             = "fg:subtle"
+format            = " [//EXEC ](bold fg:muted)[$duration ]($style)"
+
+# ── Line 2: the input chevrons ───────────────────────────────
+[character]
+success_symbol = "[››](fg:muted)[›](bold fg:text)"
+error_symbol   = "[››](fg:muted)[›](bold fg:error)"
+vimcmd_symbol  = "[‹](bold fg:peach)[‹‹](fg:muted)"
