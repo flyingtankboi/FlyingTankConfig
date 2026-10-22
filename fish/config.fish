@@ -1,4 +1,6 @@
 if status is-interactive
+	#fish config
+	set -g fish_greeting ""
 	#starship
 	starship init fish | source
 	#alias

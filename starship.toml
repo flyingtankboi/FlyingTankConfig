@@ -67,7 +67,7 @@ format   = "[@$hostname]($style)"
 
 [directory]
 style             = "bg:text fg:base bold"
-format            = "[ //$path ]($style)[$read_only]($read_only_style)"
+format            = "[ $path ]($style)[$read_only]($read_only_style)"
 truncation_length = 3
 truncation_symbol = "…/"
 read_only         = " RO "
