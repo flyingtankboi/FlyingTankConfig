@@ -7,3 +7,5 @@
 !starship.toml
 !fish/
 !fish/**
+!nvim/
+!nvim/**
