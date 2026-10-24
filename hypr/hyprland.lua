@@ -18,7 +18,7 @@ hl.monitor({
 -- Set programs that you use
 local terminal     = "kitty"
 local fileManager  = "thunar"
-local menu         = "rofi"
+local menu         = "rofi -show window"
 local notification = "swaync"
 local authAgent    = "hyprpolkitagent"
 local wallpaper    = "awww-daemon"
@@ -35,7 +35,9 @@ local statusBar    = "waybar"
 hl.on("hyprland.start",function ()
      hl.exec_cmd(notification)
      hl.exec_cmd(statusBar)
+     hl.exec_cmd(wallpaper)
      hl.exec_cmd("systemctl --user start hyprpolkitagent")
+     hl.exec_cmd("hyprpm reload -n")
 end)
 
 
@@ -72,21 +74,21 @@ hl.env("VISUAL", "nvim")
 -----------------------
 ---- LOOK AND FEEL ----
 -----------------------
+require("hyprbars")
 
 -- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({
     general = {
-        gaps_in  = 5,
-        gaps_out = 20,
+        gaps_in  = 8,
+        gaps_out = 18,
 
-        border_size = 2,
+        border_size = 1,
 
         col = {
-            active_border   = { colors = {"rgba(33ccffee)", "rgba(00ff99ee)"}, angle = 45 },
-            inactive_border = "rgba(595959aa)",
+            active_border   = "rgb(feaf72)",
+            inactive_border = "rgb(534d4f)",
         },
-
-        -- Set to true to enable resizing windows by clicking and dragging on borders and gaps
+-- Set to true to enable resizing windows by clicking and dragging on borders and gaps
         resize_on_border = true,
 
         -- Please see https://wiki.hypr.land/Configuring/Advanced-and-Cool/Tearing/ before you turn this on
@@ -101,7 +103,7 @@ hl.config({
 
         -- Change transparency of focused and unfocused windows
         active_opacity   = 0.93,
-        inactive_opacity = 0.85,
+        inactive_opacity = 0.8,
 
         shadow = {
             enabled      = true,
@@ -113,13 +115,30 @@ hl.config({
         blur = {
             enabled   = true,
             size      = 3,
-            passes    = 1,
-            vibrancy  = 0.1696,
+            passes    = 3,
+            vibrancy  = 1,
+            noise     = 0.05,
+            new_optimizations = false, -- makes the bar break in floating window mode
         },
     },
 
     animations = {
         enabled = true,
+    },
+
+    plugin = {
+        borders_plus_plus = {
+            add_borders = 2,
+            natural_rounding = false,
+
+            col = {
+                border_1 = "rgb(1a161c)",
+                border_2 = "rgb(feaf72)",
+            },
+            border_size_1 = 3,
+            border_size_2 = 1,
+        },
+
     },
 })
 
@@ -148,7 +167,7 @@ hl.animation({ leaf = "fadeLayersIn",  enabled = true,  speed = 1.79, bezier = "
 hl.animation({ leaf = "fadeLayersOut", enabled = true,  speed = 1.39, bezier = "almostLinear" })
 hl.animation({ leaf = "workspaces",    enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
 hl.animation({ leaf = "workspacesIn",  enabled = true,  speed = 1.21, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 1.94, bezier = "almostLinear", style = "fade" })
+hl.animation({ leaf = "workspacesOut", enabled = true,  speed = 0.4, bezier = "almostLinear", style = "fade" })
 hl.animation({ leaf = "zoomFactor",    enabled = true,  speed = 7,    bezier = "quick" })
 
 -- Ref https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
@@ -251,15 +270,22 @@ local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
-hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
+hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu))
+-- hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
+-- hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))    -- dwindle only
 
--- Move focus with mainMod + arrow keys
-hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
+-- Move focus with mainMod + hjkl
+hl.bind(mainMod .. " + H",  hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + K",    hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + J",  hl.dsp.focus({ direction = "down" }))
+
+-- Move workspaces mainMod + shift + hjkl
+hl.bind(mainMod .. " + SHIFT + H",  hl.dsp.window.move({ direction = "left" }))
+hl.bind(mainMod .. " + SHIFT + L", hl.dsp.window.move({ direction = "right" }))
+hl.bind(mainMod .. " + SHIFT + K",    hl.dsp.window.move({ direction = "up" }))
+hl.bind(mainMod .. " + SHIFT + J",  hl.dsp.window.move({ direction = "down" }))
+
 
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
@@ -276,6 +302,9 @@ hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:mag
 -- Scroll through existing workspaces with mainMod + scroll
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
 hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
+
+hl.bind(mainMod .. " + Tab",         hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.focus({ workspace = "e-1" }))
 
 -- Move/resize windows with mainMod + LMB/RMB and dragging
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
@@ -295,6 +324,10 @@ hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tr
 hl.bind("XF86AudioPlay",  hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = true })
 
+-- Aura/Fan/Rog
+hl.bind("XF86Launch3", hl.dsp.exec_cmd("asusctl aura effect --next-mode"))
+hl.bind("XF86Launch1", hl.dsp.exec_cmd("rog-control-center"))
+hl.bind("XF86Launch2", hl.dsp.exec_cmd("asusctl profile next"))
 
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----
