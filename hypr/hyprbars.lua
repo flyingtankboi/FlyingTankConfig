@@ -90,3 +90,11 @@ hl.plugin.hyprbars.add_button({
   icon = "□",
   action = [[hyprctl dispatch 'hl.dsp.window.float({ action = "toggle" })' && hyprctl dispatch 'hl.dsp.window.resize({ x = 800, y = 600 })' && hyprctl dispatch 'hl.dsp.window.center()']],
 })
+
+-- Set correct titles to bars 
+if hl.plugin.hyprbars.set_title then
+  hl.on("window.open", function (w)
+    --local w = hl.get_active_window()
+    hl.plugin.hyprbars.set_title(w, "// " .. string.upper(w.initial_title))
+  end)
+end

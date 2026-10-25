@@ -18,11 +18,13 @@ hl.monitor({
 -- Set programs that you use
 local terminal     = "kitty"
 local fileManager  = "thunar"
-local menu         = "rofi -show window"
+local menu         = "rofi -show drun"
 local notification = "swaync"
 local authAgent    = "hyprpolkitagent"
 local wallpaper    = "awww-daemon"
 local statusBar    = "waybar"
+local idleManager  = "hypridle"
+local login        = "hyprlock"
 
 -------------------
 ---- AUTOSTART ----
@@ -33,11 +35,13 @@ local statusBar    = "waybar"
 -- Autostart necessary processes (like notifications daemons, status bars, etc.)
 
 hl.on("hyprland.start",function ()
+     hl.exec_cmd(login)
+     hl.exec_cmd(idleManager)
      hl.exec_cmd(notification)
      hl.exec_cmd(statusBar)
      hl.exec_cmd(wallpaper)
      hl.exec_cmd("systemctl --user start hyprpolkitagent")
-     hl.exec_cmd("hyprpm reload -n")
+     hl.exec_cmd("hyprpm reload") -- add -n flag for notification
 end)
 
 
@@ -103,7 +107,7 @@ hl.config({
 
         -- Change transparency of focused and unfocused windows
         active_opacity   = 0.93,
-        inactive_opacity = 0.8,
+        inactive_opacity = 0.75,
 
         shadow = {
             enabled      = true,
@@ -215,8 +219,10 @@ hl.config({
 
 hl.config({
     misc = {
-        force_default_wallpaper = -1,    -- Set to 0 or 1 to disable the anime mascot wallpapers
-        disable_hyprland_logo   = false, -- If true disables the random hyprland logo / anime girl background. :(
+        force_default_wallpaper = 0,    -- Set to 0 or 1 to disable the anime mascot wallpapers
+        disable_hyprland_logo   = true, -- If true disables the random hyprland logo / anime girl background. :(
+        disable_splash_rendering = true,
+        background_color = "rgb(1A161C)"
     },
 })
 
@@ -326,7 +332,7 @@ hl.bind("XF86AudioPrev",  hl.dsp.exec_cmd("playerctl previous"),   { locked = tr
 
 -- Aura/Fan/Rog
 hl.bind("XF86Launch3", hl.dsp.exec_cmd("asusctl aura effect --next-mode"))
-hl.bind("XF86Launch1", hl.dsp.exec_cmd("rog-control-center"))
+hl.bind("XF86Launch1",hl.dsp.exec_cmd([[hyprctl clients | grep -q 'class: org.opengamingcollective.rog-control-center' && hyprctl dispatch 'hl.dsp.window.close({ window = "class:org.opengamingcollective.rog-control-center" })' || rog-control-center]]))
 hl.bind("XF86Launch2", hl.dsp.exec_cmd("asusctl profile next"))
 
 --------------------------------
@@ -377,4 +383,16 @@ hl.window_rule({
 
     move  = "20 monitor_h-120",
     float = true,
+})
+
+
+-- Custom rules
+hl.window_rule({
+    name = "ROG Control",
+    match = {
+        title = "ROG Control"
+    },
+    float = true,
+    size = {800,600},
+    center = true,
 })
