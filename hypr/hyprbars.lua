@@ -34,7 +34,7 @@ hl.config({
       bar_color = c.text,
       bar_blur = false,
       bar_padding = 8,          -- space between the bar's edge and its content
-      bar_part_of_window = true, -- your borders wrap around bar + window, like a HUD panel
+      bar_part_of_window = false, -- your borders wrap around bar + window, like a HUD panel
       bar_precedence_over_border = false,
 
       -- the title

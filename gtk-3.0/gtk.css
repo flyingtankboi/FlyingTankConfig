@@ -1,0 +1,433 @@
+/* ══════════════════════════════════════════════════════════════
+   gtk.css — Ember kickstart for GTK 3 apps (Thunar, dialogs, …)
+
+   Location:  ~/.config/gtk-3.0/gtk.css
+   This file is loaded ON TOP of your GTK theme, so it wins over it.
+   Best base for experimenting: Adwaita-dark (built into GTK).
+
+   APPLYING CHANGES
+   GTK reads this file when an app starts → restart the app.
+   Thunar may keep running in the background: quit it fully with
+       thunar -q
+   then open it again.
+
+   YOUR MAIN TOOL: the GTK Inspector (like browser dev tools)
+       GTK_DEBUG=interactive thunar
+   • the "target" button lets you click any part of Thunar and shows
+     its CSS node name and style classes → that's what you target here
+   • the CSS tab applies typed CSS LIVE → try things there first,
+     then copy what works into this file
+
+   GTK CSS IN SHORT
+   • like web CSS, but with its own node names (button, entry, …)
+   • colors: @define-color name value;  then use @name
+   • helpers: alpha(@c, 0.5)  mix(@a, @b, 0.5)  shade(@c, 1.2)
+   • states: :hover :active :checked :selected :focus :disabled
+             :backdrop  ← the window is NOT focused
+   • NO text insertion (no ::before content), NO CSS variables
+   • a property GTK doesn't know prints a warning and is skipped
+
+   Every section has "TRY:" ideas to experiment with.
+   ══════════════════════════════════════════════════════════════ */
+
+
+/* ── 1. PALETTE ────────────────────────────────────────────────
+   Change a color here, and everything below that uses it follows. */
+
+@define-color ember_base     #1A161C;  /* background            */
+@define-color ember_base_hi  #241E22;  /* quiet panels          */
+@define-color ember_surface  #3F3532;  /* raised surfaces       */
+@define-color ember_overlay  #534D4F;  /* borders, inactive     */
+@define-color ember_muted    #88756A;  /* dim text              */
+@define-color ember_subtle   #DDD1C4;  /* secondary text        */
+@define-color ember_text     #FFF0E2;  /* main text, title bars */
+@define-color ember_peach    #FEAF72;  /* frames, focus         */
+@define-color ember_peach_hi #FFCBA3;  /* brighter peach        */
+@define-color ember_peach_dk #BE8355;  /* dark peach            */
+@define-color ember_burgundy #6F2119;  /* selection background  */
+@define-color ember_urgent   #D00003;  /* the sharp red hint    */
+@define-color ember_error    #E5483E;  /* readable red          */
+@define-color ember_sage     #9AA36B;  /* success               */
+
+
+/* ── 2. THEME NAMED COLORS ─────────────────────────────────────
+   Many themes and apps use these standard names. Redefining them
+   recolors a lot at once — but not everything, because some themes
+   use fixed colors internally. Sections 3+ cover what this misses. */
+
+@define-color theme_bg_color                    @ember_base;
+@define-color theme_fg_color                    @ember_text;
+@define-color theme_base_color                  @ember_base;
+@define-color theme_text_color                  @ember_text;
+@define-color theme_selected_bg_color           @ember_burgundy;
+@define-color theme_selected_fg_color           @ember_text;
+@define-color insensitive_bg_color              @ember_base_hi;
+@define-color insensitive_fg_color              @ember_overlay;
+@define-color insensitive_base_color            @ember_base;
+@define-color theme_unfocused_bg_color          @ember_base;
+@define-color theme_unfocused_fg_color          @ember_subtle;
+@define-color theme_unfocused_base_color        @ember_base;
+@define-color theme_unfocused_text_color        @ember_subtle;
+@define-color theme_unfocused_selected_bg_color @ember_surface;
+@define-color theme_unfocused_selected_fg_color @ember_text;
+@define-color borders                           @ember_overlay;
+@define-color unfocused_borders                 @ember_surface;
+@define-color warning_color                     @ember_peach;
+@define-color error_color                       @ember_error;
+@define-color success_color                     @ember_sage;
+
+
+/* ── 3. GLOBAL: flat and square ────────────────────────────────
+   TRY: comment out box-shadow to see what the theme's shadows/
+        focus rings looked like; set border-radius to 2px for a
+        softer variant. */
+
+* {
+  border-radius: 0;
+  -gtk-outline-radius: 0;
+  box-shadow: none;
+  text-shadow: none;
+  -gtk-icon-shadow: none;
+}
+
+window,
+.background {
+  background-color: @ember_base;
+  color: @ember_text;
+}
+
+/* Unfocused window: text fades a little (HUD "inactive panel") */
+window:backdrop {
+  color: @ember_subtle;
+}
+
+
+/* ── 4. TITLE BAR, MENU BAR, TOOLBAR ───────────────────────────
+   Thunar shows a menubar + toolbar; apps with their own title bar
+   use headerbar.
+   TRY: give headerbar the cream HUD title-bar look:
+        background-color: @ember_text; color: @ember_base;      */
+
+headerbar,
+.titlebar {
+  background-color: @ember_base_hi;
+  background-image: none;
+  border-bottom: 1px solid @ember_overlay;
+  color: @ember_subtle;
+  min-height: 34px;
+  padding: 0 6px;
+}
+
+headerbar:backdrop,
+.titlebar:backdrop {
+  background-color: @ember_base;
+  color: @ember_muted;
+}
+
+menubar,
+toolbar,
+.toolbar,
+.primary-toolbar {
+  background-color: @ember_base_hi;
+  background-image: none;
+  border-bottom: 1px solid @ember_surface;
+  color: @ember_subtle;
+}
+
+
+/* ── 5. BUTTONS ────────────────────────────────────────────────
+   Flat by default; a peach underline appears on hover (drawn with
+   an inset shadow: 0 horizontal, -2px vertical).
+   TRY: change "-2px" to "2px" for an overline; use
+        "inset 2px 0 @ember_peach" for a left marker instead.   */
+
+button {
+  background-color: transparent;
+  background-image: none;
+  border: 1px solid transparent;
+  color: @ember_subtle;
+  padding: 4px 8px;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+button:hover {
+  background-color: @ember_surface;
+  color: @ember_text;
+  box-shadow: inset 0 -2px @ember_peach;
+}
+
+button:active,
+button:checked {
+  background-color: @ember_burgundy;
+  color: @ember_text;
+}
+
+button:disabled {
+  color: @ember_overlay;
+}
+
+
+/* ── 6. TEXT FIELDS (location bar, search, rename) ─────────────
+   TRY: caret-color @ember_urgent for a red cursor in fields.  */
+
+entry {
+  background-color: @ember_base_hi;
+  background-image: none;
+  color: @ember_text;
+  border: 1px solid @ember_overlay;
+  padding: 4px 8px;
+  caret-color: @ember_peach;
+}
+
+entry:focus {
+  border-color: @ember_peach;
+}
+
+entry selection {
+  background-color: @ember_burgundy;
+  color: @ember_text;
+}
+
+
+/* ── 7. FILE VIEW (icons, list, details) ───────────────────────
+   Thunar's main area is an iconview or a treeview with class .view.
+   TRY: selected items with a cream background and dark text,
+        like a HUD title bar: background-color: @ember_text;
+        color: @ember_base;                                    */
+
+.view,
+iconview,
+treeview.view {
+  background-color: @ember_base;
+  color: @ember_text;
+}
+
+.view:selected,
+iconview:selected,
+treeview.view:selected {
+  background-color: @ember_peach;
+  color: @ember_text;
+  -gtk-icon-effect: none;
+}
+
+/* Column headers in the list/details view */
+treeview.view header button {
+  background-color: @ember_base_hi;
+  color: @ember_muted;
+  border: none;
+  border-bottom: 1px solid @ember_overlay;
+  border-right: 1px solid @ember_surface;
+  box-shadow: none;
+}
+
+/* The rectangle you drag with the mouse to select several files */
+.rubberband,
+rubberband {
+  background-color: alpha(@ember_peach, 0.12);
+  border: 1px solid @ember_peach;
+}
+
+
+/* ── 8. SIDEBAR + THE RED HINT ─────────────────────────────────
+   The selected place gets a small sharp-red block on its left edge:
+   a gradient that is red for 3px, then transparent.
+   Check Thunar's real sidebar node names with the Inspector — if
+   nothing changes, the selectors below need adjusting.
+   TRY: 3px → 6px; or move the block to the right edge with
+        "to left" instead of "to right".                       */
+
+.sidebar,
+.sidebar .view,
+.sidebar treeview,
+placessidebar {
+  background-color: @ember_base_hi;
+}
+
+.sidebar .view:selected,
+.sidebar treeview:selected,
+placessidebar row:selected {
+  background-color: @ember_surface;
+  background-image: linear-gradient(to right, @ember_urgent 3px, transparent 3px);
+  color: @ember_text;
+}
+
+
+/* ── 9. SCROLLBARS ─────────────────────────────────────────────
+   Thin bars that light up peach when you grab them.
+   TRY: min-width 2px for an ultra-thin hairline look.          */
+
+scrollbar {
+  background-color: transparent;
+  border: none;
+}
+
+scrollbar slider {
+  background-color: @ember_overlay;
+  border: none;
+  min-width: 4px;
+  min-height: 4px;
+}
+
+scrollbar slider:hover  { background-color: @ember_peach_dk; }
+scrollbar slider:active { background-color: @ember_peach; }
+
+
+/* ── 10. MENUS AND POPOVERS (right-click menus) ────────────────
+   Framed in dark peach, like your windows.                    */
+
+menu,
+.menu,
+.context-menu,
+popover,
+popover.background {
+  background-color: @ember_base_hi;
+  color: @ember_text;
+  border: 1px solid @ember_peach_dk;
+  padding: 4px 0;
+}
+
+menuitem {
+  padding: 4px 12px;
+}
+
+menuitem:hover {
+  background-color: @ember_burgundy;
+  color: @ember_text;
+}
+
+menuitem:disabled {
+  color: @ember_overlay;
+}
+
+separator {
+  background-color: @ember_surface;
+  min-width: 1px;
+  min-height: 1px;
+}
+
+
+/* ── 11. TOOLTIPS ──────────────────────────────────────────────
+   Cream with dark text — a tiny HUD title bar.               */
+
+tooltip,
+tooltip.background {
+  background-color: @ember_text;
+  border: none;
+}
+
+tooltip label {
+  color: @ember_base;
+}
+
+
+/* ── 12. CHECKBOXES, RADIOS, SWITCHES ──────────────────────────
+   -gtk-icon-source: none removes the checkmark, so a checked box is
+   simply a solid peach square — a HUD indicator light.
+   TRY: delete that line to get the checkmark back.           */
+
+check,
+radio {
+  background-color: @ember_base_hi;
+  background-image: none;
+  border: 1px solid @ember_overlay;
+  min-width: 14px;
+  min-height: 14px;
+  -gtk-icon-source: none;
+}
+
+check:checked,
+radio:checked {
+  background-color: @ember_peach;
+  border-color: @ember_peach;
+}
+
+switch {
+  background-color: @ember_surface;
+  background-image: none;
+  border: 1px solid @ember_overlay;
+}
+
+switch:checked {
+  background-color: @ember_burgundy;
+}
+
+switch slider {
+  background-color: @ember_subtle;
+  background-image: none;
+  border: none;
+  min-width: 18px;
+  min-height: 18px;
+}
+
+switch:checked slider {
+  background-color: @ember_peach;
+}
+
+
+/* ── 13. SLIDERS AND PROGRESS BARS ─────────────────────────────
+   (file copy progress, volume sliders, …)                    */
+
+scale trough,
+progressbar trough {
+  background-color: @ember_surface;
+  background-image: none;
+  border: none;
+  min-height: 4px;
+}
+
+scale highlight,
+progressbar progress {
+  background-color: @ember_peach;
+  background-image: none;
+  border: none;
+}
+
+scale slider {
+  background-color: @ember_text;
+  background-image: none;
+  border: none;
+  min-width: 12px;
+  min-height: 12px;
+}
+
+
+/* ── 14. TABS (Thunar tabs: Ctrl+T) ────────────────────────────
+   The active tab is a cream title bar; others get the peach
+   underline on hover.                                        */
+
+notebook header {
+  background-color: @ember_base_hi;
+  border-bottom: 1px solid @ember_overlay;
+}
+
+notebook header tab {
+  padding: 4px 12px;
+  color: @ember_muted;
+  border: none;
+}
+
+notebook header tab:checked {
+  background-color: @ember_text;
+  color: @ember_base;
+}
+
+notebook header tab:hover:not(:checked) {
+  color: @ember_text;
+  box-shadow: inset 0 -2px @ember_peach;
+}
+
+
+/* ── 15. STATUS BAR + TECHNICAL TEXT ───────────────────────────
+   Thunar's bottom line ("12 items, 4 GB free") in small monospace,
+   like a HUD readout.
+   TRY: the same font on the location bar (find its node with the
+        Inspector) for a //path/style look.                    */
+
+statusbar,
+.statusbar {
+  background-color: @ember_base_hi;
+  color: @ember_muted;
+  border-top: 1px solid @ember_surface;
+  font-family: "JetBrainsMono Nerd Font Mono", monospace;
+  font-size: 9pt;
+}

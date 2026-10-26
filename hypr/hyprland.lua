@@ -55,6 +55,7 @@ hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 hl.env("EDITOR","nvim")
 hl.env("VISUAL", "nvim")
+hl.env("STEAM_FORCE_DESKTOPUI_SCALING", "1.25")
 
 -----------------------
 ----- PERMISSIONS -----
@@ -107,7 +108,7 @@ hl.config({
 
         -- Change transparency of focused and unfocused windows
         active_opacity   = 0.93,
-        inactive_opacity = 0.75,
+        inactive_opacity = 0.82,
 
         shadow = {
             enabled      = true,
