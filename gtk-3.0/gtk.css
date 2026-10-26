@@ -207,7 +207,6 @@ iconview:selected,
 treeview.view:selected {
   background-color: @ember_peach;
   color: @ember_text;
-  -gtk-icon-effect: none;
 }
 
 /* Column headers in the list/details view */
