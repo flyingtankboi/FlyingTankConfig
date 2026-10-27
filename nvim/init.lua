@@ -171,6 +171,12 @@ do
   -- instead raise a dialog asking if you wish to save the current file(s)
   -- See `:help 'confirm'`
   vim.o.confirm = true
+
+  -- indent
+  vim.o.expandtab = true   -- Tab key inserts spaces
+  vim.o.shiftwidth = 2     -- one indent level = 4 columns
+  vim.o.tabstop = 2       -- show real tab characters as 4 columns
+  vim.o.softtabstop = 2    -- Tab/Backspace move by 4 in insert mode
 end
 
 -- ============================================================
