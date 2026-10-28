@@ -125,7 +125,7 @@ Scope {
                   Modules.BatteryWidget{
                        width : 240
                        height : 19
-                       angle : 25.0
+                       angle : -25.0
 
                        anchors.right : powerIcon.left
                        anchors.rightMargin : 32

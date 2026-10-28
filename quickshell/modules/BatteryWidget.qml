@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell.Hyprland
 import qs
 import qs.components as Components
+import Quickshell.Services.UPower
 
 // Battery bar with very close code to the workspaces bar
 Item {
@@ -22,9 +23,25 @@ Item {
     property real emptyOffset: 1       // optical centering for the small bars
 
     // ── Colors ────────────────────────────────────────────────
-    property color lowColor: Theme.colors.signal
-    property color chargedColor: Theme.colors.fill
-    property color unchargedColor: Theme.colors.overlay
+    property color lowColor: Theme.colors.urgent
+    property color chargedColor: Theme.colors.fg
+    property color unchargedColor: Theme.colors.surface
+
+    // ── Charging wave (ms) ────────────────────────────────────
+    property int waveStep: 100         // delay between two neighbouring cells
+    property int waveUp: 300           // rise duration
+    property int waveDown: 300         // fall duration
+    property int wavePause: 2000       // rest between two waves
+    readonly property int wavePeriod: waveUp + waveDown + wavePause
+
+    // One shared clock for every cell (0 → 1, looping)
+    property real wavePhase: 0
+    NumberAnimation on wavePhase {
+        running: widget.isCharging
+        from: 0; to: 1
+        duration: widget.wavePeriod
+        loops: Animation.Infinite
+    }
 
     // ── Size ──────────────────────────────────────────────────
     // Room at both ends: the tallest bar's slant, plus any part of the
@@ -45,43 +62,86 @@ Item {
     implicitWidth: count * 16 + 2 * edgePadding
     height: barHeight
 
+    // For testing 
+    //readonly property int batteryPower : 66
+    //readonly property bool isPlugged : true
+    
+    // Battery stats
+    readonly property var battery: UPower.displayDevice
+    readonly property int batteryPower: battery ? Math.round(battery.percentage * 100) : 0
+    readonly property bool isPlugged: !UPower.onBattery
+    readonly property bool isCharging: battery !== null && battery.state === UPowerDeviceState.Charging
+
     Repeater {
         model: widget.count
 
         delegate: Components.Parallelogram {
-            required property int index
+            id : segment
+            readonly property int fIndex : (widget.count - 1) - index
 
-            // TODO REPLACE WITH BATTERY LOGIC + HOW TO ANIMATE !
-            readonly property int wsId: index + 1
-
-            readonly property var ws: {
-                var _trigger1 = Hyprland.focusedWorkspace
-                var _trigger2 = Hyprland.workspaces.count
-                return Hyprland.workspaces.values.find(w => w.id === wsId)
+            readonly property bool isOn: {
+                return (widget.batteryPower / widget.count) > fIndex
             }
-            readonly property bool isOccupied: ws !== undefined && ws.toplevels.values.length > 0
-            readonly property bool isActive: ws !== undefined && ws.active
+            readonly property int remainder: {
+              
+                if (widget.count === 0) return 10; 
+                
+                if (Math.floor(widget.batteryPower / widget.count) === fIndex) {
+                    console.log(index, widget.batteryPower % widget.count)
+                    return widget.batteryPower % widget.count;
+                }
+                return 10;
+            }
+            readonly property bool isRed : index == widget.count-1
 
-            // Centered in its slot
+            // Charging wave: this cell's time in the cycle, offset by its index
+            readonly property real waveTime:
+                ((widget.wavePhase * widget.wavePeriod - index * widget.waveStep)
+                 % widget.wavePeriod + widget.wavePeriod) % widget.wavePeriod
+
+            // 0 → 1 → 0 (InQuad up, OutQuad down), 0 during the pause or not charging
+            readonly property real bump:
+                !widget.isCharging ? 0
+                : waveTime < widget.waveUp ? Math.pow(waveTime / widget.waveUp, 2)
+                : waveTime < widget.waveUp + widget.waveDown
+                    ? Math.pow(1 - (waveTime - widget.waveUp) / widget.waveDown, 2)
+                : 0
+
+            // Peak size, same as before: full bar height when on, x1.4 when empty
+            readonly property real peakScale: isOn ? widget.barHeight / widget.normalHeight : 1.4
+
+
             x: widget.edgePadding + index * widget.pitch + (widget.pitch - width) / 2
             anchors.verticalCenter: parent.verticalCenter
-            anchors.verticalCenterOffset: (isActive || isOccupied) ? 0 : widget.emptyOffset
+            anchors.verticalCenterOffset: (isOn) ? 0 : widget.emptyOffset
 
             angle: widget.angle
-            width: isActive ? widget.activeWidth
-                 : isOccupied ? widget.occupiedWidth
-                 : widget.emptyWidth
-            height: isActive ? widget.barHeight
-                  : isOccupied ? widget.occupiedHeight
-                  : widget.emptyHeight
-            color: isActive ? widget.activeColor
-                 : isOccupied ? widget.occupiedColor
-                 : widget.sleepColor
 
-            Behavior on width  { NumberAnimation { duration: Theme.anim.fast; easing.type: Easing.OutBack } }
-            Behavior on height { NumberAnimation { duration: Theme.anim.fast; easing.type: Easing.InOutQuad } }
-            Behavior on color  { ColorAnimation  { duration: Theme.anim.fast / 2 } }
-            Behavior on anchors.verticalCenterOffset { NumberAnimation { duration: Theme.anim.fast } }
+            function log10(value){
+                if (value <= 0) return NaN;
+                return Math.log(value)/Math.LN10
+            }
+
+            width: isOn ? widget.chargedWidth * (6*log10(remainder)+4)/10
+                 : widget.unchargedWidth
+                  
+            height: (isOn ? widget.normalHeight : widget.emptyHeight)
+                    * (1 + bump * (peakScale - 1))
+
+            color: isRed ? widget.lowColor
+                 : isOn ? widget.chargedColor
+                 : widget.unchargedColor
         }
+    }
+    Components.ChevronReadout {
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.right: parent.right
+        anchors.rightMargin: -17
+        
+        height : 22
+        fontPixelSize : 11
+
+        value: widget.batteryPower
+        color: widget.isPlugged ? Theme.colors.fg : Theme.colors.peach
     }
 }

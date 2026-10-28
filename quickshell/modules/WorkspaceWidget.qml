@@ -86,4 +86,32 @@ Item {
             Behavior on anchors.verticalCenterOffset { NumberAnimation { duration: Theme.anim.fast } }
         }
     }
+    property bool specialVisible: false
+
+    Connections {
+        target: Hyprland
+        function onRawEvent(event) {
+            // "activespecial" fires when a special workspace is shown or hidden;
+            // its data starts with the workspace name, empty when hidden
+            if (event.name === "activespecial")
+                widget.specialVisible = event.data.split(",")[0] !== ""
+        }
+    }
+
+
+    Components.ChevronReadout {
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: -14
+        
+        height : 22
+        fontPixelSize : 11
+
+        value: !Hyprland.focusedWorkspace ? 0
+        :widget.specialVisible ? "SP" 
+        :Hyprland.focusedWorkspace.id
+        color: !Hyprland.focusedWorkspace ? Theme.colors.fg
+        :widget.specialVisible ? Theme.colors.peach
+        : Theme.colors.fg
+    }
 }

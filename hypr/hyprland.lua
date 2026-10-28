@@ -293,6 +293,8 @@ hl.bind(mainMod .. " + SHIFT + L", hl.dsp.window.move({ direction = "right" }))
 hl.bind(mainMod .. " + SHIFT + K",    hl.dsp.window.move({ direction = "up" }))
 hl.bind(mainMod .. " + SHIFT + J",  hl.dsp.window.move({ direction = "down" }))
 
+--Screenshot
+hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("bash ~/.config/scripts/screenshot.sh"))
 
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
