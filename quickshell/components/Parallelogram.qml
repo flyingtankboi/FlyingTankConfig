@@ -1,47 +1,42 @@
-import Quickshell
 import QtQuick
 import QtQuick.Shapes
+import qs
 
-Shape {
-  id: root
-  
-  required property real angle
-  required property color color
-  property real baseWidth: 12 
+// A slanted bar. width × height = its footprint at mid-height;
+// the slant sticks out beyond that box by `overhang` on each side.
+Item {
+    id: root
 
-  // Use Math.abs to always get a positive indentation size for the geometry calculations
-  readonly property int indent : Math.abs(Math.tan(angle * Math.PI / 180) * height)
-  
-  // Calculate horizontal offset to center the shape within the allocated width
-  readonly property real xOffset: (root.width - (baseWidth + indent)) / 2
+    property real angle: 25                    // degrees; positive = top leans right
+    property color color: Theme.colors.fill
+    property color strokeColor: "transparent"  // outline, e.g. for locked battery cells
+    property real strokeWidth: 0
 
-  // Determine the direction of the lean based on the angle sign
-  readonly property bool isNegative: angle < 0
+    // How far the top edge is shifted relative to the bottom edge (signed)
+    readonly property real indent: Math.tan(angle * Math.PI / 180) * height
+    // How far the slant sticks out of the footprint on each side
+    readonly property real overhang: Math.abs(indent) / 2
+    // Where the bottom and top edges start inside the drawing
+    readonly property real bottomStart: Math.max(0, -indent)
+    readonly property real topStart: Math.max(0, indent)
 
-  layer.smooth : true
-  layer.enabled : true
-  //layer.samples : 6
-  preferredRendererType: Shape.CurveRenderer
+    Shape {
+        x: -root.overhang
+        width: root.width + Math.abs(root.indent)
+        height: root.height
+        preferredRendererType: Shape.CurveRenderer
 
-  ShapePath {
-    strokeWidth : 0
-    fillColor : root.color
+        ShapePath {
+            fillColor: root.color
+            strokeColor: root.strokeColor
+            strokeWidth: root.strokeWidth
 
-    // Conditional coordinates based on whether the angle is positive or negative
-    startX : root.isNegative ? root.xOffset + root.indent : root.xOffset
-    startY: root.height
-    
-    PathLine { 
-        x: root.isNegative ? root.xOffset + root.indent + root.baseWidth : root.xOffset + root.baseWidth
-        y: root.height 
+            startX: root.bottomStart
+            startY: root.height                                            // bottom-left
+            PathLine { x: root.bottomStart + root.width; y: root.height }  // bottom-right
+            PathLine { x: root.topStart + root.width; y: 0 }               // top-right
+            PathLine { x: root.topStart; y: 0 }                            // top-left
+            PathLine { x: root.bottomStart; y: root.height }               // back to start
+        }
     }
-    PathLine { 
-        x: root.isNegative ? root.xOffset + root.baseWidth : root.xOffset + root.baseWidth + root.indent
-        y: 0 
-    }
-    PathLine { 
-        x: root.isNegative ? root.xOffset : root.xOffset + root.indent
-        y: 0 
-    }
-  }
 }

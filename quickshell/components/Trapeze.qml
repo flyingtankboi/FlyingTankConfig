@@ -11,11 +11,11 @@ Shape {
   
   property color bgColor : "transparent"
 
-  width : Shape.width
-  height : Shape.height
+  //width : Shape.width
+  //height : Shape.height
 
-  layer.smooth : true
-  layer.enabled : true
+  //layer.smooth : true
+  //layer.enabled : true
   //layer.samples : 6
   preferredRendererType: Shape.CurveRenderer
 

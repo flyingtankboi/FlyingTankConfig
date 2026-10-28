@@ -68,14 +68,14 @@ Scope {
                 color: Theme.alpha(Theme.colors.base, 0.5)
 
                 Item {
-                    id: barWidgetsContainer
+                    id: barWidgetsContainerLeft
                     anchors.fill: parent
 
                     Text {
                       id: archIcon
                       anchors.verticalCenter: parent.verticalCenter
                       anchors.left: parent.left
-                      anchors.leftMargin: 6
+                      anchors.leftMargin: 8
                       
                       text: "\uf303" 
                       
@@ -90,7 +90,6 @@ Scope {
                    Modules.WorkspaceWidget{
                        width : 240
                        height : 19
-                       distance : -48
                        angle : 25.0
 
                        anchors.left : archIcon.right
@@ -102,6 +101,41 @@ Scope {
                        sleepColor : Theme.colors.surface
                    }
                 }
+               
+                Item {
+                    id: barWidgetsContainerRight
+                    anchors.fill: parent
+
+                    Text {
+                      id: powerIcon
+                      anchors.verticalCenter: parent.verticalCenter
+                      anchors.right: parent.right
+                      anchors.rightMargin: 8
+                      
+                      text: "\u23FB" 
+                      
+                      font.family: "JetBrainsMono Nerd Font" 
+                      
+                      font.pixelSize: 23
+                      color: Theme.colors.fg
+                      
+                      renderType: Text.NativeRendering
+                  }
+
+                  Modules.BatteryWidget{
+                       width : 240
+                       height : 19
+                       angle : 25.0
+
+                       anchors.right : powerIcon.left
+                       anchors.rightMargin : 32
+                       anchors.verticalCenter: parent.verticalCenter
+                  }
+                  
+               }
+
+
+
             }
 
 
