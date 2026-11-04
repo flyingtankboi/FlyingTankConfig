@@ -3,35 +3,44 @@ import QtQuick
 import QtQuick.Shapes
 
 Shape {
-  id: root
+    id: root
 
-  required property int indent;
-  required property int borderWidth;
-  required property color borderColor;
-  
-  property color bgColor : "transparent"
+    required property int indent
+    required property int borderWidth
+    required property color borderColor
 
-  //width : Shape.width
-  //height : Shape.height
+    property color bgColor: "transparent"
 
-  //layer.smooth : true
-  //layer.enabled : true
-  //layer.samples : 6
-  preferredRendererType: Shape.CurveRenderer
+    //width : Shape.width
+    //height : Shape.height
 
-  ShapePath {
-    strokeWidth : root.borderWidth
-    strokeColor : root.borderColor
-    strokeStyle : ShapePath.SolidLine
-    capStyle : ShapePath.SquareCap
-    joinStyle : ShapePath.MiterJoin
+    //layer.smooth : true
+    //layer.enabled : true
+    //layer.samples : 6
+    preferredRendererType: Shape.CurveRenderer
 
-    fillColor : root.bgColor
+    ShapePath {
+        strokeWidth: root.borderWidth
+        strokeColor: root.borderColor
+        strokeStyle: ShapePath.SolidLine
+        capStyle: ShapePath.SquareCap
+        joinStyle: ShapePath.MiterJoin
 
-    startX : strokeWidth 
-    startY: 0
-    PathLine { x: root.indent + root.borderWidth; y: root.height - root.borderWidth }
-    PathLine { x: root.width - (root.indent + root.borderWidth); y: root.height - root.borderWidth }
-    PathLine { x: root.width - root.borderWidth; y: 0 }
-  }
+        fillColor: root.bgColor
+
+        startX: strokeWidth
+        startY: 0
+        PathLine {
+            x: root.indent + root.borderWidth
+            y: root.height - root.borderWidth
+        }
+        PathLine {
+            x: root.width - (root.indent + root.borderWidth)
+            y: root.height - root.borderWidth
+        }
+        PathLine {
+            x: root.width - root.borderWidth
+            y: 0
+        }
+    }
 }

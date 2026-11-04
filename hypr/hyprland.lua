@@ -22,7 +22,7 @@ local menu         = "rofi -show drun"
 local notification = "swaync"
 local authAgent    = "hyprpolkitagent"
 local wallpaper    = "awww-daemon"
-local statusBar    = "waybar"
+local statusBar    = "qs"
 local idleManager  = "hypridle"
 local login        = "hyprlock"
 
@@ -235,7 +235,7 @@ hl.config({
 hl.config({
     input = {
         kb_layout  = "us",
-        kb_variant = "",
+        kb_variant = "intl",
         kb_model   = "",
         kb_options = "",
         kb_rules   = "",
@@ -398,4 +398,12 @@ hl.window_rule({
     float = true,
     size = {800,600},
     center = true,
+})
+
+hl.window_rule({
+    name = "Vesktop",
+    match = {
+        class = "vesktop",
+    },
+    workspace="special:magic",
 })

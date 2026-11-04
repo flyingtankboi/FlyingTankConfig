@@ -33,10 +33,22 @@ Item {
 
             startX: root.bottomStart
             startY: root.height                                            // bottom-left
-            PathLine { x: root.bottomStart + root.width; y: root.height }  // bottom-right
-            PathLine { x: root.topStart + root.width; y: 0 }               // top-right
-            PathLine { x: root.topStart; y: 0 }                            // top-left
-            PathLine { x: root.bottomStart; y: root.height }               // back to start
+            PathLine {
+                x: root.bottomStart + root.width
+                y: root.height
+            }  // bottom-right
+            PathLine {
+                x: root.topStart + root.width
+                y: 0
+            }               // top-right
+            PathLine {
+                x: root.topStart
+                y: 0
+            }                            // top-left
+            PathLine {
+                x: root.bottomStart
+                y: root.height
+            }               // back to start
         }
     }
 }

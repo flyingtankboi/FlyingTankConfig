@@ -24,7 +24,11 @@ Item {
     implicitWidth: Math.max(label.implicitWidth, chevronWidth)
     implicitHeight: label.implicitHeight + 2 * (chevronHeight + spacing)
 
-    Behavior on color { ColorAnimation { duration: Theme.anim.normal } }
+    Behavior on color {
+        ColorAnimation {
+            duration: Theme.anim.normal
+        }
+    }
 
     // Top chevron, pointing down
     Shape {
@@ -40,20 +44,26 @@ Item {
             strokeWidth: root.chevronStroke
             joinStyle: ShapePath.MiterJoin
 
-            startX: 0; startY: 0
-            PathLine { x: root.chevronWidth / 2; y: root.chevronHeight }
-            PathLine { x: root.chevronWidth; y: 0 }
+            startX: 0
+            startY: 0
+            PathLine {
+                x: root.chevronWidth / 2
+                y: root.chevronHeight
+            }
+            PathLine {
+                x: root.chevronWidth
+                y: 0
+            }
         }
     }
 
     Text {
         id: label
         anchors.centerIn: parent
-        text: typeof root.value === "number" ? String(root.value).padStart(root.digits, "0")
-        : root.value
+        text: typeof root.value === "number" ? String(root.value).padStart(root.digits, "0") : root.value
         color: root.color
         font.family: root.fontFamily
-        font.pixelSize: fontPixelSize 
+        font.pixelSize: fontPixelSize
         font.bold: fontBold
     }
 
@@ -61,7 +71,7 @@ Item {
     Shape {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        anchors.bottomMargin : 2
+        anchors.bottomMargin: 2
         width: root.chevronWidth
         height: root.chevronHeight
         preferredRendererType: Shape.CurveRenderer
@@ -72,9 +82,16 @@ Item {
             strokeWidth: root.chevronStroke
             joinStyle: ShapePath.MiterJoin
 
-            startX: 0; startY: root.chevronHeight
-            PathLine { x: root.chevronWidth / 2; y: 0 }
-            PathLine { x: root.chevronWidth; y: root.chevronHeight }
+            startX: 0
+            startY: root.chevronHeight
+            PathLine {
+                x: root.chevronWidth / 2
+                y: 0
+            }
+            PathLine {
+                x: root.chevronWidth
+                y: root.chevronHeight
+            }
         }
     }
 }

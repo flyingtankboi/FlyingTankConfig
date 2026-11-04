@@ -33,9 +33,7 @@ Item {
     // Room at both ends: the tallest bar's slant, plus any part of the
     // active bar that is wider than its slot. Neither depends on the
     // widget's width, so there's no binding loop.
-    readonly property real edgePadding:
-        Math.abs(Math.tan(angle * Math.PI / 180) * barHeight) / 2
-        + Math.max(0, (activeDelta - 1) * gap / 2)
+    readonly property real edgePadding: Math.abs(Math.tan(angle * Math.PI / 180) * barHeight) / 2 + Math.max(0, (activeDelta - 1) * gap / 2)
 
     // Slot width (= distance between centers), from the width we're given
     readonly property real pitch: (width - 2 * edgePadding) / count
@@ -57,9 +55,9 @@ Item {
             readonly property int wsId: index + 1
 
             readonly property var ws: {
-                var _trigger1 = Hyprland.focusedWorkspace
-                var _trigger2 = Hyprland.workspaces.count
-                return Hyprland.workspaces.values.find(w => w.id === wsId)
+                var _trigger1 = Hyprland.focusedWorkspace;
+                var _trigger2 = Hyprland.workspaces.count;
+                return Hyprland.workspaces.values.find(w => w.id === wsId);
             }
             readonly property bool isOccupied: ws !== undefined && ws.toplevels.values.length > 0
             readonly property bool isActive: ws !== undefined && ws.active
@@ -70,20 +68,32 @@ Item {
             anchors.verticalCenterOffset: (isActive || isOccupied) ? 0 : widget.emptyOffset
 
             angle: widget.angle
-            width: isActive ? widget.activeWidth
-                 : isOccupied ? widget.occupiedWidth
-                 : widget.emptyWidth
-            height: isActive ? widget.barHeight
-                  : isOccupied ? widget.occupiedHeight
-                  : widget.emptyHeight
-            color: isActive ? widget.activeColor
-                 : isOccupied ? widget.occupiedColor
-                 : widget.sleepColor
+            width: isActive ? widget.activeWidth : isOccupied ? widget.occupiedWidth : widget.emptyWidth
+            height: isActive ? widget.barHeight : isOccupied ? widget.occupiedHeight : widget.emptyHeight
+            color: isActive ? widget.activeColor : isOccupied ? widget.occupiedColor : widget.sleepColor
 
-            Behavior on width  { NumberAnimation { duration: Theme.anim.fast; easing.type: Easing.OutBack } }
-            Behavior on height { NumberAnimation { duration: Theme.anim.fast; easing.type: Easing.InOutQuad } }
-            Behavior on color  { ColorAnimation  { duration: Theme.anim.fast / 2 } }
-            Behavior on anchors.verticalCenterOffset { NumberAnimation { duration: Theme.anim.fast } }
+            Behavior on width {
+                NumberAnimation {
+                    duration: Theme.anim.fast
+                    easing.type: Easing.OutBack
+                }
+            }
+            Behavior on height {
+                NumberAnimation {
+                    duration: Theme.anim.fast
+                    easing.type: Easing.InOutQuad
+                }
+            }
+            Behavior on color {
+                ColorAnimation {
+                    duration: Theme.anim.fast / 2
+                }
+            }
+            Behavior on anchors.verticalCenterOffset {
+                NumberAnimation {
+                    duration: Theme.anim.fast
+                }
+            }
         }
     }
     property bool specialVisible: false
@@ -94,24 +104,19 @@ Item {
             // "activespecial" fires when a special workspace is shown or hidden;
             // its data starts with the workspace name, empty when hidden
             if (event.name === "activespecial")
-                widget.specialVisible = event.data.split(",")[0] !== ""
+                widget.specialVisible = event.data.split(",")[0] !== "";
         }
     }
-
 
     Components.ChevronReadout {
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: -14
-        
-        height : 22
-        fontPixelSize : 11
 
-        value: !Hyprland.focusedWorkspace ? 0
-        :widget.specialVisible ? "SP" 
-        :Hyprland.focusedWorkspace.id
-        color: !Hyprland.focusedWorkspace ? Theme.colors.fg
-        :widget.specialVisible ? Theme.colors.peach
-        : Theme.colors.fg
+        height: 22
+        fontPixelSize: 11
+
+        value: !Hyprland.focusedWorkspace ? 0 : widget.specialVisible ? "SP" : Hyprland.focusedWorkspace.id
+        color: !Hyprland.focusedWorkspace ? Theme.colors.fg : widget.specialVisible ? Theme.colors.peach : Theme.colors.fg
     }
 }

@@ -3,4 +3,5 @@ import qs.bar as Bar
 
 Scope {
 	Bar.TopBar {}
+	Bar.SideBar {}
 }

@@ -34,25 +34,28 @@ Scope {
             // Clicks only land on the bar and the tab; elsewhere they pass through
             mask: Region {
                 item: barBackground
-                Region { item: clock; intersection: Intersection.Combine }
+                Region {
+                    item: clock
+                    intersection: Intersection.Combine
+                }
             }
 
             // Bar border left
             Rectangle {
-              id: border1
-              width: parent.width/2-46
-              height: 1
-              y:barInstance.barHeight
-              color: Theme.colors.peach
+                id: border1
+                width: parent.width / 2 - 46
+                height: 1
+                y: barInstance.barHeight
+                color: Theme.colors.peach
             }
             // Bar border right
             Rectangle {
-              id: border2
-              width: parent.width/2-46
-              height: 1
-              x: parent.width/2+46
-              y:barInstance.barHeight
-              color: Theme.colors.peach
+                id: border2
+                width: parent.width / 2 - 46
+                height: 1
+                x: parent.width / 2 + 46
+                y: barInstance.barHeight
+                color: Theme.colors.peach
             }
 
             // 1. The bar itself
@@ -62,7 +65,7 @@ Scope {
                     top: parent.top
                     left: parent.left
                     right: parent.right
-                } 
+                }
 
                 height: barInstance.barHeight
                 color: Theme.alpha(Theme.colors.base, 0.5)
@@ -71,73 +74,66 @@ Scope {
                     id: barWidgetsContainerLeft
                     anchors.fill: parent
 
-                    Text {
-                      id: archIcon
-                      anchors.verticalCenter: parent.verticalCenter
-                      anchors.left: parent.left
-                      anchors.leftMargin: 8
-                      
-                      text: "\uf303" 
-                      
-                      font.family: "JetBrainsMono Nerd Font" 
-                      
-                      font.pixelSize: 23
-                      color: Theme.colors.fg
-                      
-                      renderType: Text.NativeRendering
-                   }
-                  
-                   Modules.WorkspaceWidget{
-                       width : 240
-                       height : 19
-                       angle : 25.0
+                    Modules.ArchIconWidget {
+                        id: archIcon
 
-                       anchors.left : archIcon.right
-                       anchors.leftMargin : 32
-                       anchors.verticalCenter: parent.verticalCenter
+                        height : barInstance.barHeight
+                        width : barInstance.barHeight
 
-                       activeColor : Theme.colors.urgent
-                       occupiedColor : Theme.colors.fg
-                       sleepColor : Theme.colors.surface
-                   }
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.left: parent.left
+                        anchors.leftMargin: 6
+
+                        icon: "\uf303"
+
+                        fontSize : 23
+                    }
+
+                    Modules.WorkspaceWidget {
+                        width: 240
+                        height: 19
+                        angle: 25.0
+
+                        anchors.left: archIcon.right
+                        anchors.leftMargin: 32
+                        anchors.verticalCenter: parent.verticalCenter
+
+                        activeColor: Theme.colors.urgent
+                        occupiedColor: Theme.colors.fg
+                        sleepColor: Theme.colors.surface
+                    }
                 }
-               
+
                 Item {
                     id: barWidgetsContainerRight
                     anchors.fill: parent
 
-                    Text {
-                      id: powerIcon
-                      anchors.verticalCenter: parent.verticalCenter
-                      anchors.right: parent.right
-                      anchors.rightMargin: 8
-                      
-                      text: "\u23FB" 
-                      
-                      font.family: "JetBrainsMono Nerd Font" 
-                      
-                      font.pixelSize: 23
-                      color: Theme.colors.fg
-                      
-                      renderType: Text.NativeRendering
-                  }
+                    Modules.PowerIconWidget {
+                        id: powerIcon
 
-                  Modules.BatteryWidget{
-                       width : 240
-                       height : 19
-                       angle : -25.0
+                        width : barInstance.barHeight
+                        height : barInstance.barHeight
 
-                       anchors.right : powerIcon.left
-                       anchors.rightMargin : 32
-                       anchors.verticalCenter: parent.verticalCenter
-                  }
-                  
-               }
+                        anchors.verticalCenter: parent.verticalCenter
+                        anchors.right: parent.right
+                        anchors.rightMargin: 8
 
+                        icon: "\uf011"
 
+                        fontSize: 22
+                    }
 
+                    Modules.BatteryWidget {
+                        width: 240
+                        height: 19
+                        angle: -25.0
+
+                        anchors.right: powerIcon.left
+                        anchors.rightMargin: 32
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
             }
-
 
             // 2. The clock tab, declared after the bar so it's drawn on top
             Modules.ClockWidget {
