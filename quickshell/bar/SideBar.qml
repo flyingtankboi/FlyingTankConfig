@@ -59,6 +59,10 @@ Scope {
 
                     color: Theme.alpha(Theme.colors.base, 0.5)
 
+                    Modules.VolumeWidget {
+                        anchors.bottom : parent.bottom
+                        anchors.horizontalCenter : parent.horizontalCenter
+                    }
                     
                 }
             }
